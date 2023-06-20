@@ -1,0 +1,52 @@
+import React, { useState } from 'react'
+import './style.css'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+
+function Login() {
+    const [values, setValues] = useState({
+        username: '',
+        password: ''
+    })
+    const navigate = useNavigate()
+
+    const [error, setError] = useState('')
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        axios.post('http://localhost:8081/login', values)
+        .then(res => {
+            if(res.data.Status === 'Success'){
+            navigate('/dashboard');
+        }else{
+            setError(res.data.Error);
+        }
+    })
+        .catch(err => console.log(err));
+    }
+  return (
+    <div className='d-flex justify-content-center align-items-center vh-100 loginpage'>
+    <div className='bg-white p-3 rounded w-20 border'>
+        <div className='text-danger'>
+            {error && error}
+        </div>
+        <h2>HELIX fotós/videós igénylő</h2>
+        <form onSubmit={handleSubmit}>
+            <div className='mb-3'>
+                <label htmlFor="username"><strong>Username</strong></label>
+                <input type="username" placeholder='Add meg a felhasználóneved' name='username' 
+                  onChange={e => setValues({...values, username: e.target.value})} className='form-control rounded-0'/>
+            </div>
+            <div className='mb-3'>
+                <label htmlFor="password"><strong>Password</strong></label>
+                <input type="password" placeholder='Add meg a jelszavad' name='password'
+                onChange={e => setValues({...values, password: e.target.value})} className='form-control rounded-0' />
+            </div>
+            <button type='submit' className='btn btn-success w-100 rounded-0'> Bejelentkezés</button>
+        </form>
+    </div>
+    </div> 
+  )
+}
+
+export default Login
